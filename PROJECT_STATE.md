@@ -1,6 +1,6 @@
 # Current Phase
 
-Phase 10 — Docker and CI (completed)
+Phase 11 — Deployment (preparation verified; hosted deployment pending)
 
 # Completed
 
@@ -37,6 +37,10 @@ Phase 10 — Docker and CI (completed)
 
 # Architecture Decisions
 
+- Phase 11 preparation installed: explicit production profile, environment-driven production REST CORS using the existing mapping, Railway backend manifest (one replica, no sleeping/overlap, existing Dockerfile/health endpoint) and Vercel static Vite build with room-route fallback. Exact deployment steps and hosted acceptance checklist are in docs/deployment.md. Gameplay and dependency manifests are unchanged.
+- Publication: full project pushed to https://github.com/Kune2707/WikiRace on main; generated artifacts/private environment files excluded. Local checks passed: 184 backend tests (including 6 production transport/CORS checks and 11 PostgreSQL checks), 71 frontend tests, typecheck, both builds and all 5 offline Playwright checks. Browser tests were rerun after concurrent JAR replacement caused the first attempt to fail; the clean run passed. No automated live Wikipedia calls.
+- Only free-tier deployment resources are authorized. Paid resources, plans and add-ons require explicit approval. Production URLs, hosted race/WebSocket verification and persisted-result verification after hosted backend restart remain pending provider login/setup. Phase 11 is not complete; do not begin Phase 12.
+
 - Parallax writes bounded CSS offsets once per animation frame without React state updates; scheduled work and media listeners are cleaned up. Article sanitization memoizes by HTML, not wrapper identity; existing request/WebSocket cleanup remains intact.
 
 - Single backend instance; live rooms in memory with per-room locks. No provider network I/O under room locks.
@@ -66,7 +70,7 @@ Phase 10 — Docker and CI (completed)
 
 # Known Issues
 
-- Hosted GitHub Actions execution remains unverified until a repository push. Docker setup is local HTTP only; deployment/TLS are outside Phase 10. Cold builds need registry/dependency access; version-tracking base image tags are not immutable digests.
+- Hosted GitHub Actions results are not yet verified. Vercel/Railway deployment requires manual account login/authorization and free-tier eligibility checks; no paid resources have been created. Public HTTPS/WSS gameplay and Railway result persistence remain unverified. Cold builds need registry/dependency access; version-tracking base image tags are not immutable digests.
 - Live races do not survive restart; one backend instance only.
 - Unlimited/Sudden Death and abandoned active races have no abandonment timeout; retained live rooms can still grow without bound. Changing this gameplay policy requires approval.
 - Real Wikipedia may throttle or exceed operation budgets; loads fail without partial movement and may be retried. Configure a real project/contact User-Agent before shared/deployed use.
@@ -77,4 +81,4 @@ Phase 10 — Docker and CI (completed)
 
 # Next Phase
 
-- Phase 11 — Deployment, only when explicitly requested. Do not begin automatically.
+- Finish Phase 11 provider setup and hosted acceptance checks after user login/authorization. Do not begin Phase 12.
