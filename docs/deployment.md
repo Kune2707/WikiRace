@@ -2,7 +2,31 @@
 
 ## Status
 
-Deployment preparation is implemented. The authorized repository is https://github.com/Kune2707/WikiRace. No production URLs or authenticated Vercel/Railway projects have been supplied, so no hosted deployment or production race has been verified. Phase 11 is not complete until the acceptance checklist below passes on the actual public URLs. Example domains below are placeholders, not deployed services. Only free-tier resources are authorized; any paid plan, billable resource or add-on requires explicit user approval before provisioning.
+Phase 11 is complete (PASS), verified on 2026-10-07 using application revision `4a1b55bcadabd8e22b6ec10193834f2d3314a31c` from [Kune2707/WikiRace](https://github.com/Kune2707/WikiRace). Public deployment was explicitly approved by the user. Vercel project `wiki-race` uses Hobby; Railway project `dependable-courage` uses existing free trial credit, with a private `Postgres` service and retained volume. No paid plan, add-on, custom domain or public PostgreSQL endpoint was enabled. Further paid/billable provisioning requires explicit approval.
+
+| Production setting | Verified value |
+| --- | --- |
+| Frontend / exact allowed origin | `https://wiki-race-eta.vercel.app` |
+| API base URL | `https://wikirace-production-deba.up.railway.app` |
+| Native WebSocket | `wss://wikirace-production-deba.up.railway.app/ws` |
+| Health | `https://wikirace-production-deba.up.railway.app/api/health` |
+| Railway project | `72240798-98a2-4e9c-a68b-5f5624cbc75f` |
+| Wikimedia User-Agent | `WikiRace/0.0.1 (https://github.com/Kune2707/WikiRace)` |
+
+The provider-generated stable frontend domain is public without Vercel sign-in. Preview domains are not in the backend allowlist. Generic `YOUR-...` domains in the reusable instructions below are placeholders; use the verified values above for this deployment.
+
+### Acceptance Evidence
+
+- Public frontend and health returned HTTP 200 without provider authentication. The frontend displayed Backend connected; invite/deep-route reload loaded the SPA rather than a Vercel 404.
+- Production preflight accepted the exact frontend origin and required content-type/X-Player-Token headers; an unapproved origin returned HTTP 403.
+- Two browser tabs with separate player identities created/joined room `T6SPS9`. Native WSS/STOMP reported Connected and synchronized settings, readiness, countdown, movement/Back and finish. Guest refresh during ACTIVE restored the same identity and authoritative state. No client WebSocket command path was added.
+- A temporary third participant observed REST snapshots, checked nondecreasing room versions and verified close players' `currentArticle` was null in shared payloads. Tokens stayed only in process/browser memory and were not recorded in evidence.
+- Manual official-Wikipedia race: `Computer science -> Computation -> Computer science -> Mathematics`. The host won with 3 clicks in 134 seconds at `2026-10-07T19:06:59Z`; both browsers showed the same winner, and Back was disabled after finish. Close warnings hid opponents' article locations while private article content remained readable.
+- Result UUID `8fca72d2-7019-449f-bc52-e79e5a1a84a6` reported `SAVED`. Public [completed result](https://wikirace-production-deba.up.railway.app/api/races/8fca72d2-7019-449f-bc52-e79e5a1a84a6/results) contained one winner, all three participants and ordered visit logs. Its response was byte-for-byte identical after a backend-only restart at `2026-10-07T19:07:52Z`, with the same private database/volume retained.
+- Restart logs showed private JDBC connectivity, successful Flyway V1 validation/current schema, Hibernate startup and the STOMP broker. In-memory room sessions became invalid after restart, as designed; a fresh landing screen remained Backend connected.
+- Local checks passed: 184 backend tests including 11 real PostgreSQL and 6 production transport/CORS tests; 71 frontend tests; frontend typecheck/build; backend package; 5 offline Playwright checks; revised backend Docker image. [Hosted CI run 37670362774](https://github.com/Kune2707/WikiRace/actions/runs/37670362774) passed for the deployed application revision. No automated test contacted live Wikipedia.
+
+Limitations: Railway trial time/credit is finite, live rooms do not survive a backend restart, and only one backend instance is supported. Railway's PostgreSQL 18.6 template emits a Flyway warning that this bundled version's tested support ends at PostgreSQL 17; actual migration, validation and completed-result restart checks passed. No database/dependency version was silently changed. Testing used one computer/network, not a separate device/network.
 
 ## Topology
 
@@ -12,7 +36,7 @@ Deployment preparation is implemented. The authorized repository is https://gith
 
 The browser connects directly to Railway, not through Vercel rewrites or Vercel Functions. `VITE_API_BASE_URL=https://YOUR-BACKEND-DOMAIN` yields REST at `/api/...` and the existing client derives `wss://YOUR-BACKEND-DOMAIN/ws`. There is no separate WebSocket environment variable, SockJS endpoint or client command channel. Tokens remain in REST/CONNECT headers, never URLs. Do not append `/api` or `/ws` to the base URL.
 
-Use one region and one backend replica. The manifest disables sleeping and deployment overlap. This is not zero-downtime game-state migration: restart/redeploy loses all live rooms, and old WebSockets can briefly outlive a traffic switch. Redeploy only after races finish, stop the old deployment if needed, and have clients create new rooms afterward. Do not enable multi-region replicas, PR backend environments sharing production traffic, Redis or distributed locks.
+Use one region and one backend replica. Configure sleeping off and deployment overlap/draining to zero in the dashboard; the legacy manifest records the same intended settings but is not used by this new service. This is not zero-downtime game-state migration: restart/redeploy loses all live rooms, and old WebSockets can briefly outlive a traffic switch. Redeploy only after races finish, stop the old deployment if needed, and have clients create new rooms afterward. Do not enable multi-region replicas, PR backend environments sharing production traffic, Redis or distributed locks.
 
 ## Prerequisites
 
@@ -24,8 +48,8 @@ Use one region and one backend replica. The manifest disables sleeping and deplo
 ## Railway Setup
 
 1. Create/select a Railway project and production environment. Add PostgreSQL and name its service `Postgres` (or substitute its real service name in every reference below). Confirm a persistent database volume is attached. Keep PostgreSQL on private networking; the browser never connects to it.
-2. Add the backend from the GitHub monorepo. Set service Root Directory to `/backend` and Config File to `/backend/railway.json`. The Dockerfile path in that manifest is `Dockerfile`, relative to the backend build context. Leave custom build/start/pre-deploy commands unset: the existing Dockerfile packages the application and starts its JRE runtime. Do not deploy the Compose frontend here.
-3. Confirm the resolved deployment settings: Dockerfile builder, one replica, sleeping disabled, `/api/health`, 180-second health timeout, on-failure restart (10 retries), zero overlap/draining. Keep exactly one region; remove any old dashboard multi-region override. See [Railway monorepo paths](https://docs.railway.com/deployments/monorepo) and [configuration reference](https://docs.railway.com/config-as-code/reference).
+2. Add the backend from the GitHub monorepo. Set service Root Directory to `/backend`; Railway automatically detects its `Dockerfile`. Leave custom build/start/pre-deploy commands unset: the existing Dockerfile packages the application and starts its JRE runtime. Do not deploy the Compose frontend here. At provisioning on 2026-10-07 the dashboard states that new services cannot opt into legacy Config-as-code since 2026-08-28, and existing files stop working after 2026-12-01. Therefore do not rely on `/backend/railway.json` for this service; apply the equivalent settings in the dashboard instead of redesigning the architecture.
+3. Confirm the resolved deployment settings: detected Dockerfile builder, one replica, sleeping disabled, `/api/health`, 180-second health timeout, on-failure restart (10 retries), Enable Teardown on with overlap and draining both zero. Keep exactly one region; remove any old dashboard multi-region override. See [Railway monorepo paths](https://docs.railway.com/deployments/monorepo) and [deployment teardown](https://docs.railway.com/guides/deployment-teardown). The optional Maven cache mount was removed because Railway requires service-specific cache IDs; plain Maven packaging preserves application behavior and keeps the Dockerfile portable. See [Dockerfile cache requirements](https://docs.railway.com/builds/dockerfiles).
 4. Generate a public backend domain under service Settings / Networking and note its HTTPS origin. Use `PORT=8080` with domain target port 8080 for this Docker image. Railway terminates public TLS; do not change the Java application to listen with an embedded TLS certificate.
 5. Configure the variables in the table below before the final production deploy. The frontend origin must be the actual Vercel domain obtained in the next section. Initial provisioning is not acceptance verification until both services have the final URLs.
 6. Deploy the backend. Inspect startup for a successful Flyway V1 migration (or an already-current schema), Hibernate validation and server startup. Never set `ddl-auto=create/update`, disable Flyway or use the `test`/`persistence-test` profiles in production.

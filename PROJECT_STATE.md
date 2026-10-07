@@ -1,6 +1,6 @@
 # Current Phase
 
-Phase 11 — Deployment (preparation verified; hosted deployment pending)
+Phase 11 — Deployment (completed; PASS)
 
 # Completed
 
@@ -37,9 +37,11 @@ Phase 11 — Deployment (preparation verified; hosted deployment pending)
 
 # Architecture Decisions
 
-- Phase 11 preparation installed: explicit production profile, environment-driven production REST CORS using the existing mapping, Railway backend manifest (one replica, no sleeping/overlap, existing Dockerfile/health endpoint) and Vercel static Vite build with room-route fallback. Exact deployment steps and hosted acceptance checklist are in docs/deployment.md. Gameplay and dependency manifests are unchanged.
-- Publication: full project pushed to https://github.com/Kune2707/WikiRace on main; generated artifacts/private environment files excluded. Local checks passed: 184 backend tests (including 6 production transport/CORS checks and 11 PostgreSQL checks), 71 frontend tests, typecheck, both builds and all 5 offline Playwright checks. Browser tests were rerun after concurrent JAR replacement caused the first attempt to fail; the clean run passed. No automated live Wikipedia calls.
-- Only free-tier deployment resources are authorized. Paid resources, plans and add-ons require explicit approval. Vercel/Railway logins are confirmed; Vercel shows Hobby and Railway shows a Trial with $5 credit/30 days remaining at inspection on 2026-10-07. GitHub sign-in is connected, but repository application authorization is still required: Railway lists no accessible repositories and offers Configure GitHub App; Vercel explicitly requires installing its GitHub application for the namespace. No hosted services or paid resources were created. Production URLs, hosted race/WebSocket verification and persisted-result verification after hosted backend restart remain pending. Phase 11 is not complete; do not begin Phase 12.
+- Phase 11 published on 2026-10-07: frontend https://wiki-race-eta.vercel.app; backend https://wikirace-production-deba.up.railway.app; native STOMP at wss://wikirace-production-deba.up.railway.app/ws. GitHub main: https://github.com/Kune2707/WikiRace; verified application revision `4a1b55bcadabd8e22b6ec10193834f2d3314a31c`. Exact deployment steps and acceptance evidence are in docs/deployment.md. Product behavior and dependencies are unchanged.
+- Verification passed: 184 backend tests (6 production transport/CORS and 11 real PostgreSQL checks), 71 frontend tests, typecheck, both builds, 5 offline Playwright checks and the revised backend Docker build. Hosted GitHub CI run `37670362774` passed for the deployed revision. Previously completed preparation was not repeated; automated tests never called live Wikipedia.
+- Hosted manual race `T6SPS9`: two browser players plus a temporary REST observer; settings/ready/countdown, WSS synchronization, movement/Back, close payload redaction, refresh reconnect and one winner passed. Real Wikipedia route: Computer science -> Computation -> Computer science -> Mathematics; 3 clicks, 134 seconds, finished 2026-10-07T19:06:59Z. Result `8fca72d2-7019-449f-bc52-e79e5a1a84a6` reported SAVED and its public JSON was byte-identical after backend-only restart at 19:07:52Z, proving PostgreSQL persistence.
+- Vercel project `wiki-race` uses Hobby, root `frontend`, Production VITE_API_BASE_URL set to the backend origin. Railway project `dependable-courage` (`72240798-98a2-4e9c-a68b-5f5624cbc75f`) uses existing free trial credit, private Postgres/retained volume and one backend replica, sleeping off, zero overlap/draining, `/backend` Dockerfile, production profile and `/api/health` (180-second timeout). Exact REST/WebSocket origin is https://wiki-race-eta.vercel.app. Database secrets remain service references; no public PostgreSQL access or paid plan/add-on was enabled.
+- Railway's new-service legacy Config-as-code is unavailable; equivalent settings were applied in the dashboard. Removed the optional service-incompatible Maven Docker cache mount only. Flyway V1 migrated and validated successfully on Railway PostgreSQL 18.6; the bundled Flyway warns its tested support ends at PostgreSQL 17.
 
 - Parallax writes bounded CSS offsets once per animation frame without React state updates; scheduled work and media listeners are cleaned up. Article sanitization memoizes by HTML, not wrapper identity; existing request/WebSocket cleanup remains intact.
 
@@ -70,7 +72,7 @@ Phase 11 — Deployment (preparation verified; hosted deployment pending)
 
 # Known Issues
 
-- Hosted GitHub Actions results are not yet verified. Vercel/Railway accounts are signed in, but GitHub connection/repository access requires manual user authorization; no hosted or paid resources have been created. Public HTTPS/WSS gameplay and Railway result persistence remain unverified. Cold builds need registry/dependency access; version-tracking base image tags are not immutable digests.
+- Railway trial credit/time is finite; no paid upgrade is authorized. PostgreSQL 18.6 emits a Flyway tested-version warning despite successful migration, validation and restart persistence checks. Cold builds need registry/dependency access; base image tags are not immutable digests.
 - Live races do not survive restart; one backend instance only.
 - Unlimited/Sudden Death and abandoned active races have no abandonment timeout; retained live rooms can still grow without bound. Changing this gameplay policy requires approval.
 - Real Wikipedia may throttle or exceed operation budgets; loads fail without partial movement and may be retried. Configure a real project/contact User-Agent before shared/deployed use.
@@ -81,4 +83,4 @@ Phase 11 — Deployment (preparation verified; hosted deployment pending)
 
 # Next Phase
 
-- Finish Phase 11 provider setup and hosted acceptance checks after the user authorizes GitHub access for Vercel and Railway. Do not begin Phase 12.
+- Phase 12 — Portfolio Documentation, only when explicitly requested. Stop after Phase 11.
