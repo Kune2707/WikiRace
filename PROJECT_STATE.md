@@ -1,6 +1,6 @@
 # Current Phase
 
-Post-MVP — Full-Screen Responsive UI (completed; PASS)
+Post-MVP — Global Wikipedia Table Rendering (completed; PASS)
 
 # Completed
 
@@ -17,6 +17,9 @@ Post-MVP — Full-Screen Responsive UI (completed; PASS)
 - Post-MVP production verification (2026-10-08): UI commit 5f5764eb222eea22fc52cebeae5bdaed4c26c68b pushed to main; Vercel automatically built in 15s and published deployment 4x75UD8qnjHa62sNWB3oAEZz6PfC to the stable public frontend domain. Loaded production assets include index-D5hOGH9A.js and index-Dvg5XFr3.css. Two separate player tabs created/joined ACAL6Z; settings, ready, countdown, movement and finish synchronized over native STOMP. Host moved Computer science -> Computation; guest won Computer science -> Mathematics with 1 click in 56 seconds. Desktop/tablet/mobile checks at 1440, 1280, 1024, 768, 390 and 320px found no horizontal overflow; independent article scrolling and responsive player alignment passed. This is manual hosted verification, not a live-Wikipedia automated test.
 
 # Architecture Decisions
+
+- Post-MVP tables (2026-10-08): both article sanitizers preserve rowspan/colspan, captions, header scope/IDs/relationships, column groups and footers. Recognized table classes are allowlisted; inline layout styles and arbitrary classes remain stripped. Cell blocks are preserved; empty invisible template spacers and empty list markers do not create blank space. Native automatic table layout uses intrinsic widths, never equal columns or global full-width tables; focusable labeled wrappers contain horizontal overflow. Infoboxes stay compact on desktop and in normal mobile flow. Gameplay, navigation validation, DTOs, persistence and dependencies are unchanged.
+- Table verification: 37 backend sanitizer/provider tests, 76 frontend tests, typecheck, frontend production build, backend package and 9 Playwright checks passed. Offline official-Wikipedia table excerpts from Richard Burton (1376704316), Academy Award for Best Actor (1378696624) and Summer Olympic Games (1373247608), plus synthetic unknown-class/long-text/list/link/merged-cell cases, were checked at 1440, 1280, 1024, 768, 390 and 320px. Screenshots reviewed for desktop/tablet/mobile; no page/article horizontal overflow, compact tables remain narrow and wide tables scroll via keyboard. Automated tests never contact live Wikipedia. Changes are local only; no commit, push or deployment performed for this request.
 
 - One backend instance; live rooms/tokens in memory with per-room locks. Slow provider I/O, event broadcasting and result saving occur outside room locks; movement commit revalidates player revision. Exactly one valid target arrival wins.
 - Backend owns articles, clicks, history/visit log, timers, readiness, close state and winner. REST is the sole command path; native /ws broadcasts full versioned, redacted room snapshots. CONNECT authenticates room/token; subscriptions are room-scoped and client SEND is rejected.

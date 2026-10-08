@@ -131,8 +131,26 @@ svg { flex-shrink: 0; }
 .wiki-content a { color: #286f87; text-decoration: none; border-bottom: 1px solid #9ebfc7; cursor: pointer; }
 .wiki-content a:hover { color: #1a5368; background: #e8f2f2; }
 .wiki-content.blocked a[data-wiki-title] { cursor: wait; opacity: .65; }
-.wiki-content table { max-width: 100%; border-collapse: collapse; display: block; overflow: auto; font-size: 13px; }
-.wiki-content td, .wiki-content th { padding: 6px; border: 1px solid #dce2dc; }
+.wiki-table-scroll { width: 100%; min-width: 0; max-width: 100%; margin: 20px 0; overflow-x: auto; overscroll-behavior-x: contain; container-type: inline-size; }
+.wiki-table-scroll:focus-visible { outline: 2px solid #286f87; outline-offset: 2px; }
+.wiki-content table { display: table; table-layout: auto; width: max-content; min-width: 0; max-width: none; border-collapse: collapse; float: none; clear: none; position: static; font-size: 14px; line-height: 1.5; overflow-wrap: normal; }
+.wiki-content caption { caption-side: top; text-align: left; font-weight: 700; padding: 8px 0; overflow-wrap: anywhere; }
+.wiki-content td, .wiki-content th { padding: 8px 10px; border: 1px solid #dce2dc; vertical-align: top; text-align: left; white-space: normal; overflow-wrap: anywhere; word-break: normal; max-width: min(32rem, calc(100cqw - 22px)); }
+.wiki-content th { font-weight: 700; background: #f1f5f3; }
+.wiki-content td > :first-child, .wiki-content th > :first-child { margin-top: 0; }
+.wiki-content td > :last-child, .wiki-content th > :last-child { margin-bottom: 0; }
+.wiki-content td ul, .wiki-content td ol, .wiki-content th ul, .wiki-content th ol { padding-left: 20px; }
+.wiki-content td p, .wiki-content th p { margin: .4em 0; }
+.wiki-content td ul, .wiki-content td ol, .wiki-content th ul, .wiki-content th ol { margin: .35em 0; }
+.wiki-content table li:empty, .wiki-content table ul:not(:has(li:not(:empty))), .wiki-content table ol:not(:has(li:not(:empty))) { display: none; }
+.wiki-content table.infobox, .wiki-content table.sidebar, .wiki-content table.vertical-navbox { width: auto; max-width: min(28rem, 100%); }
+.wiki-content .infobox th { min-width: 7.5rem; max-width: 10rem; }
+.wiki-content .infobox td { min-width: 8rem; max-width: 18rem; }
+.wiki-content table.navbox, .wiki-content table.navbox-inner { font-size: 13px; }
+@media (max-width: 600px) {
+  .wiki-content .infobox td { min-width: 0; }
+  .wiki-content table.infobox { max-width: 100%; }
+}
 .wiki-content pre { white-space: pre-wrap; }
 .article-credit { font-size: 11px; color: #6d7e88; margin-top: 32px; padding-top: 12px; border-top: 1px solid #e0e6e1; }
 .close-banner, .sudden-banner { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 20px; font-size: 13px; color: #a83038; background: #fbecef; border-bottom: 1px solid #eed1d7; animation: surface-enter 250ms ease-out; flex-shrink: 0; overflow-wrap: anywhere; }
