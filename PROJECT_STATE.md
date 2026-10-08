@@ -1,86 +1,46 @@
 # Current Phase
 
-Phase 11 — Deployment (completed; PASS)
+Post-MVP — Full-Screen Responsive UI (completed; PASS)
 
 # Completed
 
-- Phase 0 architecture/API design and project control files initialized.
-- Phase 1 Java 21 / Spring Boot / Maven backend, health/development CORS and React / TypeScript / Vite / React Router connection screen.
-- Phase 2 in-memory rooms, authorization, settings/readiness, countdown/timers/sudden death, authoritative navigation/Back, close redaction, atomic winner and retained-window idempotency.
-- Phase 3 official English MediaWiki search, canonical/redirect resolution, namespace filtering, sanitized private article endpoint and canonical gameplay edges implemented.
-- Jsoup sanitization, bounded/expiring Caffeine caches, streaming response limit, operation deadlines and structured upstream errors added; FakeArticleProvider preserved for offline tests.
-- Backend suite: 114 tests passed with no live Wikipedia calls. Backend executable package, frontend typecheck and production build passed.
-- Manual live search and two-player race passed: canonical selection, sanitized content, private access, invalid navigation, close redaction, winner and duplicate handling. Wikimedia 429 produced structured 503 without committing movement.
-- Phase 4 responsive HTML/CSS first-person desk/laptop scene, create/join/invite lobby, article autocomplete/settings, readiness, server countdown, article navigation/Back, HUD, close warnings, Sudden Death and finished-state summary implemented.
-- Restrained sound cues/mute, keyboard access, reduced-motion support, DOMPurify defense-in-depth sanitization and confirmed-only movement with retained UUID retries added.
-- Frontend typecheck, 39 unit/interaction tests, 3 offline Playwright browser checks and production build passed. Backend regressions: 114 tests passed; backend sources unchanged.
-- Phase 5 authenticated, room-isolated native Spring WebSocket/STOMP broadcasts added; REST remains the only gameplay command path. Immutable redacted snapshots are captured under room locks and published afterward.
-- Ready/settings/countdown/movement/close/sudden-death/finish synchronization, monotonic client ordering, multi-socket presence and disconnect/refresh/resume implemented; normal REST polling removed.
-- Verification: 135 backend tests, 44 frontend tests, 3 browser regressions, frontend typecheck and both production builds passed. No live Wikipedia calls in automated tests.
-- Four isolated Chrome contexts completed the manual multiplayer race with real REST/STOMP and FakeArticleProvider: fifth-player rejection, payload redaction, room isolation, disconnect/resume/refresh and concurrent single-winner finish passed.
-- Phase 6 credential-only session restore, guarded native browser Back, capped exponential reconnect/jitter and offline/online pause/resync added; uncertain movement blocks new intents until explicit same-UUID retry resolves.
-- Per-player sliding movement-request limit (10/second), five-minute WAITING grace, abandoned-host lobby expiry and 30-minute FINISHED retention implemented. Cleanup revokes removed identities and closes room sockets without expiring live races.
-- Verification: 152 backend tests, 55 frontend tests, frontend typecheck/production build and backend package passed; all 3 browser checks passed with reload/native Back/offline-online regressions. Sudden Death browser reload uses deterministic timestamps; backend restore covers all five real model statuses. No live Wikipedia calls in automated tests.
-- Phase 7 Spring Data JPA/PostgreSQL/Flyway completed-result storage and public GET /api/races/{id}/results implemented. Immutable results freeze at winner commit; transactional persistence occurs after unlocking and broadcasting FINISHED.
-- Normalized race/player/ordered-visit rows, idempotent concurrent save claim, separate PENDING/SAVED/FAILED status and retained-memory fallback added; active rooms/tokens/WebSocket/runtime state are never persisted.
-- Verification: 163 backend tests (11 real PostgreSQL Testcontainers checks), 55 frontend tests, typecheck, frontend production build, backend package and all 3 browser regressions passed. Database rollback/failure, exact timestamp round trips, cleanup lookup, ordered Back visits, concurrent saves/winners and application shutdown/restart verified. No live Wikipedia calls in automated tests.
-
-- Phase 8 refined CSS desk/laptop depth, restrained state transitions, opponent close-edge pulse, distinct win/loss effects and accessible loading/error/disconnected states. All animation/parallax stops under reduced motion; gameplay, backend and dependencies unchanged.
-- Verification: 65 frontend tests, typecheck, production build and 4 offline Playwright checks passed. Reviewed desktop/mobile close/loss/error screenshots; verified 320px layout, large article scrolling, reduced motion and parallax cleanup. Unchanged backend package and all 163 regression tests passed.
-
-- Phase 9 audited game/Wikipedia/API/STOMP/persistence correctness and security. Fixed cancelled/overlapping/stale frontend session responses and command-lock ownership; strict JSON now rejects trailing values and duplicate fields with structured 400 errors. No product features or gameplay changes.
-- Verification: 178 backend tests including 11 real PostgreSQL persistence checks, 71 frontend tests, typecheck, both builds and 5 offline Playwright checks passed. Added forged-state, hostile-name/external-link, token-log, duplicate-STOMP credential and callback-cleanup regressions. See docs/phase9-audit.md.
-- Dependency usage review found no confirmed unused dependencies; manifests unchanged. npm audit reported zero advisories for the installed graph. Maven bytecode warnings were reviewed as starter/transitive/runtime usage, not blindly removed; no Java vulnerability-database scan was run.
-
-- Phase 10 added multi-stage non-root backend/frontend Dockerfiles, Nginx REST/WebSocket proxying and SPA fallback, health-gated PostgreSQL Compose services, environment examples and push/PR GitHub Actions CI. Application sources, gameplay, dependencies and API contracts are unchanged.
-- Verification: 178 backend tests (11 PostgreSQL integration checks), 71 frontend tests, typecheck, both builds and 5 offline Playwright checks passed. Both Docker images built; all three services were healthy before/after recreation, with the same retained database/migration. REST/STOMP smoke checks and Chrome production-bundle create/join/refresh/reconnect passed without live Wikipedia calls. Compose configuration and actionlint passed; hosted CI has not run.
+- Phases 0-3: architecture/API design, Java 21/Spring Boot/Maven foundation, authoritative in-memory game engine and official English MediaWiki integration; FakeArticleProvider preserved for deterministic tests.
+- Phases 4-6: responsive CSS desk/laptop frontend, 2-4 player REST/STOMP gameplay, ready/settings/countdown/movement/finish synchronization, close redaction, refresh/resume, network retry guards, rate limiting and room cleanup.
+- Phases 7-10: transactional PostgreSQL completed results, frontend polish, security/correctness regressions, non-root Docker/Compose stack and GitHub Actions CI. Product rules remain unchanged.
+- Phase 11: public Vercel frontend, single public Railway backend, private PostgreSQL/retained volume; exact production CORS/WSS/JDBC/Flyway configuration and hosted acceptance verified. See docs/deployment.md.
+- Phase 11 checks passed: 184 backend tests (11 real PostgreSQL and 6 production transport/CORS), 71 frontend tests, typecheck, backend/frontend builds, 5 offline Playwright checks, Docker checks and hosted CI run 37670362774. No automated tests called live Wikipedia.
+- Hosted real-Wikipedia race T6SPS9 finished with one winner at 2026-10-07T19:06:59Z: Computer science -> Computation -> Computer science -> Mathematics, 3 clicks / 134 seconds. Close payload redaction, WSS synchronization and guest refresh passed. Saved result 8fca72d2-7019-449f-bc52-e79e5a1a84a6 was byte-identical after backend restart; application revision 4a1b55b, deployment completion commit 7715a1a.
+- Phase 12: production-quality README/demo image, implemented architecture/API reference, reproducible run/test/deployment instructions, engineering tradeoffs/limitations and factual resume/portfolio notes. Documentation-only changes; application/configuration/dependencies unchanged.
+- Phase 12 checks passed: nonempty documents, relative links/anchors, balanced fences, shell/JSON snippet syntax, npm command existence, demo JPEG and documentation-only diff; both public frontend and health returned HTTP 200. Application suites/builds were not rerun for this documentation-only phase; prior results above are explicitly historical.
+- Post-MVP UI (2026-10-08): explicitly requested full-screen layout replaces the laptop/desk framing, props and parallax. The header holds branding, room, target, timer/sudden death, connection and mute; article/sidebar use stable responsive grids and independent scrolling. Mobile player layout, player badges, article actions, results and fixed lobby action footer are aligned. Backend, rules, API contracts, persistence and dependencies are unchanged.
+- Post-MVP checks passed: 73 frontend tests, typecheck, production build, 5 Playwright checks and screenshot review. Landing/lobby/race/results checked at 1440, 1280, 1024, 768, 390 and 320px; countdown, reconnect, close redaction, win/loss, sudden death, long article scrolling, reduced motion and keyboard access remain covered. Changes verified locally, not deployed to production.
 
 # Architecture Decisions
 
-- Phase 11 published on 2026-10-07: frontend https://wiki-race-eta.vercel.app; backend https://wikirace-production-deba.up.railway.app; native STOMP at wss://wikirace-production-deba.up.railway.app/ws. GitHub main: https://github.com/Kune2707/WikiRace; verified application revision `4a1b55bcadabd8e22b6ec10193834f2d3314a31c`. Exact deployment steps and acceptance evidence are in docs/deployment.md. Product behavior and dependencies are unchanged.
-- Verification passed: 184 backend tests (6 production transport/CORS and 11 real PostgreSQL checks), 71 frontend tests, typecheck, both builds, 5 offline Playwright checks and the revised backend Docker build. Hosted GitHub CI run `37670362774` passed for the deployed revision. Previously completed preparation was not repeated; automated tests never called live Wikipedia.
-- Hosted manual race `T6SPS9`: two browser players plus a temporary REST observer; settings/ready/countdown, WSS synchronization, movement/Back, close payload redaction, refresh reconnect and one winner passed. Real Wikipedia route: Computer science -> Computation -> Computer science -> Mathematics; 3 clicks, 134 seconds, finished 2026-10-07T19:06:59Z. Result `8fca72d2-7019-449f-bc52-e79e5a1a84a6` reported SAVED and its public JSON was byte-identical after backend-only restart at 19:07:52Z, proving PostgreSQL persistence.
-- Vercel project `wiki-race` uses Hobby, root `frontend`, Production VITE_API_BASE_URL set to the backend origin. Railway project `dependable-courage` (`72240798-98a2-4e9c-a68b-5f5624cbc75f`) uses existing free trial credit, private Postgres/retained volume and one backend replica, sleeping off, zero overlap/draining, `/backend` Dockerfile, production profile and `/api/health` (180-second timeout). Exact REST/WebSocket origin is https://wiki-race-eta.vercel.app. Database secrets remain service references; no public PostgreSQL access or paid plan/add-on was enabled.
-- Railway's new-service legacy Config-as-code is unavailable; equivalent settings were applied in the dashboard. Removed the optional service-incompatible Maven Docker cache mount only. Flyway V1 migrated and validated successfully on Railway PostgreSQL 18.6; the bundled Flyway warns its tested support ends at PostgreSQL 17.
-
-- Parallax writes bounded CSS offsets once per animation frame without React state updates; scheduled work and media listeners are cleaned up. Article sanitization memoizes by HTML, not wrapper identity; existing request/WebSocket cleanup remains intact.
-
-- Single backend instance; live rooms in memory with per-room locks. No provider network I/O under room locks.
-- Server owns all gameplay and timestamps; room-scoped opaque tokens are stored as digests.
-- Accepted-action cache retains 2,048 records/player by default, configurable and insertion-ordered; duplicate suppression ends at eviction or room cleanup.
-- Normal runtime uses only the official English MediaWiki Action API; the test profile uses FakeArticleProvider. Automated integration tests mock the HTTP client.
-- HTML, revision metadata and canonical outgoing edges form one immutable article snapshot, pinned per player until movement. Private article reads return that snapshot under the room lock.
-- Article and alias caches each default to 500 entries/30-minute expiry; connection timeout 3 seconds, overall operation budget 10 seconds, response limit 8 MiB. Environment-configurable.
-- Native `/ws` authenticates CONNECT headers, allows only the player's exact room subscription and rejects client SEND. Exact allowed origins are environment-driven; no token URLs or private data broadcasts.
-- First-person React hooks consume versioned shared snapshots and REST private state. Subscription receipts precede resync; stale events are ignored, while fresh private REST state can merge without regressing public state. The display clock uses server timestamps plus monotonic elapsed time.
-- Browser tabs keep separate room code/token credentials; localStorage retains a per-room resume fallback, never playerId/gameplay. Identity and game state come from REST. Ten-second heartbeats, 1.5-to-15-second exponential reconnect and up to 300 ms attempt jitter; browser offline pauses transport. Gameplay waits for authenticated subscription/private resync.
-- Retained duplicates bypass rate limiting. New movement attempts, including rejected/upstream failures, consume a per-player sliding one-second budget before provider I/O; excess returns 429 RATE_LIMITED without gameplay mutation.
-- Scheduled cleanup every 10 seconds removes expired non-host WAITING slots, expires an offline host's lobby after five-minute grace (no host migration), and removes FINISHED rooms 30 minutes after finish, closing sockets. Durations/rate/interval are environment-configurable. Initial unconnected players receive the same grace; COUNTDOWN/ACTIVE/SUDDEN_DEATH remain intact.
-- Native browser Back uses one same-URL guard during live gameplay and submits only server BACK; unavailable/busy/offline/pending movements are suppressed. Explicit routing remains available and the in-game Back button stays canonical.
-- CSS-only scene; no Three.js/WebGL. Frontend additions are icons, HTML sanitization and testing tools only.
-- Flyway V1 owns completed_race/player_result/visit_step schema; Hibernate validates, never auto-creates. Result UUID equals runtime room UUID; ordered visits and participant/winner constraints are explicit. Completed-result timestamps use microsecond precision for exact PostgreSQL round trips; live timing is unchanged. No session tokens/digests or runtime state in database.
-- FINISHED broadcasts before synchronous bounded-time database I/O outside room locks. One transaction commits all result rows; atomic ON CONFLICT claim prevents duplicate aggregates. Failure preserves winner/runtime result, sets FAILED, logs race ID only; no durable retry queue.
-- Public result lookup prefers a retained completed DTO, otherwise reads PostgreSQL transactionally. Saved results survive room cleanup/restart; active sessions do not. Database connection settings are environment-driven. Offline test profile disables DB; persistence-test adds automatically provisioned real PostgreSQL.
-
-- Docker exposes only the frontend on loopback, serving the compiled bundle and proxying `/api/` and native `/ws` to one backend. Backend/frontend run non-root with read-only filesystems; PostgreSQL uses a retained named volume. The required database password stays in the environment or ignored `.env`; browser origin is configured at frontend build time and must match the exact WebSocket allowed origin. CI tests/builds and disposable stack verification do not deploy.
+- One backend instance; live rooms/tokens in memory with per-room locks. Slow provider I/O, event broadcasting and result saving occur outside room locks; movement commit revalidates player revision. Exactly one valid target arrival wins.
+- Backend owns articles, clicks, history/visit log, timers, readiness, close state and winner. REST is the sole command path; native /ws broadcasts full versioned, redacted room snapshots. CONNECT authenticates room/token; subscriptions are room-scoped and client SEND is rejected.
+- Each player retains the latest 2,048 accepted action records by default, insertion-ordered/configurable. Same retained ID/intent is DUPLICATE; another intent conflicts. No suppression guarantee after eviction; failed actions are not accepted records.
+- ArticleProvider uses official English MediaWiki APIs in normal runtime, fake/mock data in automated tests. Jsoup plus DOMPurify sanitize HTML. Article/alias caches each default to 500 entries/30 minutes; snapshots are pinned per player until movement. Defaults: 3s connection, 10s operation, 8 MiB response limit.
+- Browser sessionStorage holds tab credentials; localStorage has a per-room resume fallback, never authoritative identity/gameplay. Ten-second heartbeats, 1.5-15s backoff/jitter and subscription-before-private-resync protect reconnect. Uncertain movement blocks new intents until an explicit same-UUID retry resolves.
+- Defaults: 10 new movement attempts/player/second, 5m WAITING grace, 30m FINISHED retention, 10s cleanup. Expired host lobby closes without migration; live race participants are retained.
+- Flyway owns normalized completed_race/player_result/visit_step schema; Hibernate validates. Immutable results freeze at winner commit and save transactionally after FINISHED broadcast; separate PENDING/SAVED/FAILED status. Only completed results persist, never tokens, active state, locks or sockets.
+- Full-screen CSS/semantic DOM interface, no decorative scene, 3D engine or global state library. This user-authorized post-MVP visual change supersedes the earlier first-person framing; gameplay is unchanged. Result UI shows winner/time/clicks/settings; full ordered paths are in the public results API.
+- Production URLs: https://wiki-race-eta.vercel.app and https://wikirace-production-deba.up.railway.app/api/health. Native STOMP: wss://wikirace-production-deba.up.railway.app/ws. Exact allowed origin is the frontend URL; VITE_API_BASE_URL is the backend origin.
+- Vercel Hobby and existing Railway trial credit only; no paid plan/add-on/public database endpoint enabled. Railway uses one replica, sleeping off, zero overlap/draining and dashboard settings because new-service legacy Config-as-code is unavailable. Optional incompatible Maven cache mount was removed, with no runtime changes.
 
 # Current API
 
-- Health; create/join/read rooms; settings; ready/start/navigate/back; public wiki search; token-authenticated /api/rooms/{code}/me/article. See README and docs/api.md.
-- Existing REST gameplay APIs are preserved; native `/ws` broadcasts authoritative redacted room events only. Development CORS, WebSocket origins and VITE_API_BASE_URL are configurable.
-- Public GET /api/races/{id}/results returns completed metadata, winner and ordered player visit logs; 409 unfinished, 404 unknown, 400 malformed UUID, 503 saved lookup unavailable. Result availability is separate from race state.
+- Health, public wiki search, create/join/read room, host settings/start, ready, navigate/back, authenticated /me/article and public completed results. Exact DTOs/errors/headers are in docs/api.md.
+- GET /api/races/{id}/results exposes completed metadata, winner and all player visit logs; retained result first, PostgreSQL fallback. Known unfinished UUID: 409; missing: 404; malformed: 400; unavailable saved lookup: 503.
 
 # Known Issues
 
-- Railway trial credit/time is finite; no paid upgrade is authorized. PostgreSQL 18.6 emits a Flyway tested-version warning despite successful migration, validation and restart persistence checks. Cold builds need registry/dependency access; base image tags are not immutable digests.
-- Live races do not survive restart; one backend instance only.
-- Unlimited/Sudden Death and abandoned active races have no abandonment timeout; retained live rooms can still grow without bound. Changing this gameplay policy requires approval.
-- Real Wikipedia may throttle or exceed operation budgets; loads fail without partial movement and may be retried. Configure a real project/contact User-Agent before shared/deployed use.
-- Article images are omitted. Abrupt network-loss detection depends on negotiated heartbeat timeouts; room/event state is not durable across restart.
-- Full player visit logs are available through the public completed-results API; the unchanged frontend still renders the winner/time/clicks/settings summary only.
-- Failed unsaved results disappear after runtime retention/restart; there is no durable retry queue. Normal backend startup requires PostgreSQL. This remains a per-instance, in-memory gameplay limiter.
-- Races still require 2-4 real players; two tabs permit a single-browser demonstration without changing backend rules.
+- Live races/tokens do not survive backend restart or support multiple instances. Abandoned active/unlimited/Sudden Death rooms have no timeout, so global live-room memory is not bounded.
+- Failed unsaved results disappear on cleanup/restart; no durable retry queue. Full guest names/paths intentionally become public by result UUID. No accounts, matchmaking, leaderboard, spectators or comprehensive anti-abuse system.
+- Wikipedia throttling/timeouts remain possible; article images and full-path UI rendering are omitted. Health is liveness, not continuous dependency readiness.
+- Railway trial time/credit is finite; paid upgrades require approval. PostgreSQL 18.6 emits a Flyway tested-version warning despite successful migration/validation/restart persistence. Image tags are not immutable digests.
+- No performance/adoption/uptime metrics or comprehensive Java vulnerability-database scan claimed. Hosted manual race verification used one computer/network.
 
 # Next Phase
 
-- Phase 12 — Portfolio Documentation, only when explicitly requested. Stop after Phase 11.
+- All phases in PHASE_PLAN.md are complete. Stop; future work requires an explicit user request.

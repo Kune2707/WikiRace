@@ -51,38 +51,6 @@ export default function Race({
         finished ? (winner?.playerId === view.me.playerId ? "race-won" : "race-lost") : "",
       ].filter(Boolean).join(" ")}
     >
-      <div className="race-hud">
-        <div className="target">
-          <span className="eyebrow">TARGET</span>
-          <strong>{view.room.settings.targetArticle}</strong>
-        </div>
-        <div className="race-time">
-          <span className="eyebrow">
-            {sudden
-              ? "SUDDEN DEATH"
-              : finished
-                ? "FINAL TIME"
-                : view.room.settings.unlimited
-                  ? "ELAPSED"
-                  : "REMAINING"}
-          </span>
-          <strong>{timer(view, now)}</strong>
-        </div>
-        <div className="click-counter">
-          <MousePointer2 size={16} />
-          <strong>{view.me.clickCount}</strong>
-          <span>clicks</span>
-        </div>
-        <button
-          className="icon-button back-button"
-          title="Back"
-          aria-label="Back"
-          disabled={disabled || !article || !view.me.canGoBack || finished}
-          onClick={() => move(movement("back"))}
-        >
-          <ArrowLeft size={20} />
-        </button>
-      </div>
       {sudden && (
         <div className="sudden-banner" role="status">
           <TriangleAlert size={18} /> SUDDEN DEATH
@@ -120,9 +88,26 @@ export default function Race({
           aria-busy={!article || disabled}
         >
           <div className="article-heading">
-            <span className="eyebrow">WIKIPEDIA</span>
-            <h1>{view.me.currentArticle}</h1>
-            <span className="article-rule" />
+            <div className="article-title">
+              <span className="eyebrow">WIKIPEDIA</span>
+              <h1>{view.me.currentArticle}</h1>
+            </div>
+            <div className="article-actions">
+              <div className="click-counter">
+                <MousePointer2 size={16} />
+                <strong>{view.me.clickCount}</strong>
+                <span>clicks</span>
+              </div>
+              <button
+                className="icon-button back-button"
+                title="Back"
+                aria-label="Back"
+                disabled={disabled || !article || !view.me.canGoBack || finished}
+                onClick={() => move(movement("back"))}
+              >
+                <ArrowLeft size={20} />
+              </button>
+            </div>
           </div>
           {articleError ? (
             <div role="alert" className="article-failure">

@@ -14,6 +14,7 @@ import {
 import GameEnvironment from "./components/GameEnvironment";
 import Lobby from "./components/Lobby";
 import Race from "./components/Race";
+import RaceStatus from "./components/RaceStatus";
 import { useRoom } from "./hooks/useRoom";
 import { useGameBack } from "./hooks/useGameBack";
 import { api } from "./lib/api";
@@ -174,6 +175,15 @@ export default function App() {
             <BookOpen size={21} />
             <span>WikiRace</span>
           </div>
+          {view && (
+            <div className="header-room">
+              <span className="eyebrow">ROOM</span>
+              <strong>{view.room.roomCode}</strong>
+            </div>
+          )}
+          {view && ["ACTIVE", "SUDDEN_DEATH", "FINISHED"].includes(view.room.status) && (
+            <RaceStatus view={view} now={game.now} />
+          )}
           <div className="header-actions">
             <span
               className="connection-state"

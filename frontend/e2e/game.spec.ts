@@ -1,5 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+const viewports = [
+  { width: 1440, height: 900 },
+  { width: 1280, height: 800 },
+  { width: 1024, height: 768 },
+  { width: 768, height: 1024 },
+  { width: 390, height: 844 },
+  { width: 320, height: 568 },
+];
+
 test("two tabs complete the single-browser REST race with countdown, Back and winner", async ({
   page,
   context,
@@ -40,6 +49,13 @@ test("two tabs complete the single-browser REST race with countdown, Back and wi
   await guest.getByRole("button", { name: "Ready", exact: true }).click();
   await page.getByRole("button", { name: "Ready", exact: true }).click();
   await expect(page.getByRole("button", { name: "Start Race" })).toBeEnabled();
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await expect(page.getByRole("button", { name: "Start Race" })).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `test-results/lobby-${viewport.width}.png`, animations: "disabled" });
+  }
+  await page.setViewportSize(viewports[0]);
   await page.screenshot({ path: "test-results/lobby-desktop.png", animations: "disabled" });
   await page.getByRole("button", { name: "Start Race" }).click();
   await expect(page.getByText("GET READY")).toBeVisible();
@@ -87,6 +103,23 @@ test("two tabs complete the single-browser REST race with countdown, Back and wi
   await guest.screenshot({path: "test-results/close-alert-desktop.png", animations: "disabled"});
   await expect(page.getByText("Alex is one click away!")).not.toBeVisible();
   await expect(guest.locator(".players")).not.toContainText("Mathematics");
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await expect(page.locator(".header-room")).toContainText(code);
+    await expect(page.locator(".target")).toContainText("Quantum Mechanics");
+    await expect(page.getByRole("button", { name: "Back", exact: true })).toBeInViewport();
+    const bounds = await page.evaluate(() => {
+      const article = document.querySelector(".article-scroll")!.getBoundingClientRect();
+      const players = document.querySelector(".players")!.getBoundingClientRect();
+      return { overflow: document.documentElement.scrollWidth > innerWidth, article: { x: article.x, right: article.right, bottom: article.bottom, height: article.height }, players: { x: players.x, right: players.right, top: players.top, bottom: players.bottom }, height: innerHeight };
+    });
+    expect(bounds.overflow).toBe(false);
+    expect(bounds.article.height).toBeGreaterThan(100);
+    expect(bounds.players.bottom).toBeLessThanOrEqual(bounds.height + 1);
+    if (viewport.width > 600) expect(bounds.article.right).toBeLessThanOrEqual(bounds.players.x + 1);
+    else expect(bounds.article.bottom).toBeLessThanOrEqual(bounds.players.top + 1);
+    await page.screenshot({ path: `test-results/fullscreen-race-${viewport.width}.png`, animations: "disabled" });
+  }
   await page.screenshot({ path: "test-results/race-desktop.png", animations: "disabled" });
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(
@@ -118,18 +151,19 @@ test("two tabs complete the single-browser REST race with countdown, Back and wi
   );
   expect(saved).toEqual(hostId);
   await page.screenshot({ path: "test-results/results-desktop.png", animations: "disabled" });
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await expect(page.getByRole("heading", { name: "Alex wins" })).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: `test-results/fullscreen-results-${viewport.width}.png`, animations: "disabled" });
+  }
   await guest.close();
 });
 
-test("mobile and desktop scene stays framed, keyboard-accessible and reduced-motion safe", async ({
+test("full-screen layout fits six viewports, stays keyboard-accessible and reduced-motion safe", async ({
   page,
 }) => {
-  for (const viewport of [
-    { width: 1440, height: 1000 },
-    { width: 768, height: 1024 },
-    { width: 390, height: 844 },
-    { width: 320, height: 568 },
-  ]) {
+  for (const viewport of viewports) {
     await page.setViewportSize(viewport);
     await page.goto("/");
     await expect(
@@ -137,15 +171,12 @@ test("mobile and desktop scene stays framed, keyboard-accessible and reduced-mot
     ).toBeVisible();
     await expect(page.getByRole("button", { name: "Join Room" })).toBeVisible();
     const geometry = await page.evaluate(() => {
-      const laptop = document.querySelector(".laptop")!.getBoundingClientRect();
-      const screen = document
-        .querySelector(".laptop-display")!
-        .getBoundingClientRect();
+      const screen = document.querySelector(".application")!.getBoundingClientRect();
       const button = [...document.querySelectorAll("button")]
         .find((b) => b.textContent?.includes("Join Room"))!
         .getBoundingClientRect();
       return {
-        laptop: laptop.width,
+        width: screen.width,
         screenBottom: screen.bottom,
         buttonBottom: button.bottom,
         overflow: document.documentElement.scrollWidth > innerWidth,
@@ -155,8 +186,8 @@ test("mobile and desktop scene stays framed, keyboard-accessible and reduced-mot
     expect(geometry.overflow).toBe(false);
     expect(geometry.screenBottom).toBeLessThanOrEqual(geometry.height);
     expect(geometry.buttonBottom).toBeLessThanOrEqual(geometry.screenBottom);
-    if (viewport.width === 1440)
-      expect(geometry.laptop / viewport.width).toBeCloseTo(0.84, 2);
+    expect(geometry.width).toBe(viewport.width);
+    await expect(page.locator(".laptop, .keyboard, .desk-surface, .coffee-cup, .notebook")).toHaveCount(0);
     await page.screenshot({
       path: `test-results/landing-${viewport.width}.png`,
       animations: "disabled",
@@ -166,7 +197,7 @@ test("mobile and desktop scene stays framed, keyboard-accessible and reduced-mot
   await page.mouse.move(20, 20);
   expect(
     await page
-      .locator(".laptop")
+      .locator(".game-viewport")
       .evaluate((el) => getComputedStyle(el).transform),
   ).toBe("none");
   await expect(page.locator(".landing")).toHaveCSS("animation-name", "none");

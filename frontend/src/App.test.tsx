@@ -25,7 +25,7 @@ function app(path = "/") {
     </MemoryRouter>,
   );
 }
-it("loads the first-person shell, validates inputs and creates a server room", async () => {
+it("loads the full-screen interface, validates inputs and creates a server room", async () => {
   const view = fixture("WAITING");
   view.room.settings.startArticle = null;
   view.room.settings.targetArticle = null;
@@ -44,7 +44,9 @@ it("loads the first-person shell, validates inputs and creates a server room", a
   fireEvent.click(screen.getByRole("button", { name: "Create Room" }));
   await screen.findByRole("heading", { name: "Room ABC234" });
   expect(enter).toHaveBeenCalledWith("Alex", undefined);
-  expect(document.querySelector(".laptop-display")).toBeInTheDocument();
+  expect(document.querySelector(".game-viewport")).toBeInTheDocument();
+  expect(document.querySelector(".laptop-display")).toBeNull();
+  expect(document.querySelector(".header-room")).toHaveTextContent("ABC234");
   expect(screen.getByRole("button", { name: "Start Race" })).toBeDisabled();
 });
 it("joins an invite without inheriting another tab identity or exposing tokens in links", async () => {

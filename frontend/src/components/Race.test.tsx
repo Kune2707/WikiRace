@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import Race from "./Race";
+import RaceStatus from "./RaceStatus";
 import { fixture } from "../lib/testFixtures";
 import type { Article } from "../lib/types";
 const article: Article = {
@@ -59,7 +60,7 @@ it("shows server-confirmed sudden death and finish without fetching future resul
   const p = props();
   p.view.room.status = "SUDDEN_DEATH";
   p.view.room.suddenDeathStartedAt = "2026-10-07T00:00:02Z";
-  const { rerender } = render(<Race {...p} />);
+  const { rerender } = render(<><RaceStatus view={p.view} now={p.now} /><Race {...p} /></>);
   expect(screen.getByText("+00:08")).toBeInTheDocument();
   p.view.room.status = "FINISHED";
   p.view.room.winnerPlayerId = "host";

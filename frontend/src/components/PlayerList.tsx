@@ -38,12 +38,14 @@ export default function PlayerList({
                   {player.displayName}
                   {self && <small> You</small>}
                 </strong>
-                {player.host && <Crown size={15} aria-label="Host" />}
-                {player.connected ? (
-                  <Wifi size={14} aria-label="Connected" />
-                ) : (
-                  <WifiOff size={14} aria-label="Disconnected" />
-                )}
+                <span className="player-badges">
+                  <span>{player.host && <Crown size={15} aria-label="Host" />}</span>
+                  {player.connected ? (
+                    <Wifi size={14} aria-label="Connected" />
+                  ) : (
+                    <WifiOff size={14} aria-label="Disconnected" />
+                  )}
+                </span>
               </div>
               {lobby ? (
                 <div className={player.ready ? "readiness ready" : "readiness"}>
